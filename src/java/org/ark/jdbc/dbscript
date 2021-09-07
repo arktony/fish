@@ -1,0 +1,293 @@
+//    -- MySQL Workbench Forward Engineering
+//
+//SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+//SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+//SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+//
+//-- -----------------------------------------------------
+//-- Schema fmanager
+//-- -----------------------------------------------------
+//
+//-- -----------------------------------------------------
+//-- Schema fmanager
+//-- -----------------------------------------------------
+//CREATE SCHEMA IF NOT EXISTS `fmanager` DEFAULT CHARACTER SET utf8 ;
+//USE `fmanager` ;
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`business`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`business` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `name` VARCHAR(45) NOT NULL,
+//  `email` VARCHAR(45) NOT NULL,
+//  `phone` VARCHAR(45) NOT NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `dateReg` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  PRIMARY KEY (`id`),
+//  UNIQUE INDEX `name_UNIQUE` (`name` ASC) ,
+//  UNIQUE INDEX `email_UNIQUE` (`email` ASC) ,
+//  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) )
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`user`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`user` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `firstName` VARCHAR(45) NOT NULL,
+//  `lastName` VARCHAR(45) NOT NULL,
+//  `email` VARCHAR(45) NOT NULL,
+//  `phone` VARCHAR(45) NOT NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `password` VARCHAR(45) NOT NULL,
+//  `regDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `superFlag` VARCHAR(45) NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  UNIQUE INDEX `email_UNIQUE` (`email` ASC) ,
+//  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) ,
+//  INDEX `fk_user_business_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_user_business`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`suppliers`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`suppliers` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `firstName` VARCHAR(45) NOT NULL,
+//  `lastName` VARCHAR(45) NOT NULL,
+//  `phone` VARCHAR(45) NOT NULL,
+//  `email` VARCHAR(45) NULL,
+//  `nin` VARCHAR(45) NULL,
+//  `address` VARCHAR(45) NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `dateReg` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) ,
+//  INDEX `fk_suppliers_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_suppliers_business1`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`items`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`items` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `name` VARCHAR(45) NOT NULL,
+//  `kgfrom` VARCHAR(45) NULL,
+//  `kgto` VARCHAR(45) NULL,
+//  `buying` VARCHAR(45) NULL,
+//  `selling` VARCHAR(45) NULL,
+//  `regDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `status` VARCHAR(45) NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_product_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_product_business1`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`purchases`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`purchases` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `pNum` BIGINT(9) NOT NULL,
+//  `amt` DOUBLE NOT NULL,
+//  `amtPaid` DOUBLE NULL,
+//  `supplier` INT NOT NULL,
+//  `pdate` DATE NOT NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `pstamp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `user_id` INT NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_purchases_user1_idx` (`user_id` ASC) ,
+//  INDEX `fk_purchases_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_purchases_user1`
+//    FOREIGN KEY (`user_id`)
+//    REFERENCES `fmanager`.`user` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION,
+//  CONSTRAINT `fk_purchases_business1`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`purchased_items`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`purchased_items` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `name` VARCHAR(45) NOT NULL,
+//  `unitcost` DOUBLE NOT NULL,
+//  `qty` INT NOT NULL,
+//  `subTotal` DOUBLE NOT NULL,
+//  `purchases_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_purchased_items_purchases1_idx` (`purchases_id` ASC) ,
+//  CONSTRAINT `fk_purchased_items_purchases1`
+//    FOREIGN KEY (`purchases_id`)
+//    REFERENCES `fmanager`.`purchases` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`customers`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`customers` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `fullName` VARCHAR(45) NOT NULL,
+//  `phone` VARCHAR(45) NOT NULL,
+//  `email` VARCHAR(45) NULL,
+//  `address` VARCHAR(45) NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `dateReg` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) ,
+//  INDEX `fk_suppliers_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_suppliers_business10`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`sales`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`sales` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `sNum` BIGINT(9) NOT NULL,
+//  `amt` DOUBLE NOT NULL,
+//  `amtPaid` DOUBLE NULL,
+//  `customer` INT NOT NULL,
+//  `sdate` DATE NOT NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `dateMade` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//  `user_id` INT NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_purchases_user1_idx` (`user_id` ASC) ,
+//  INDEX `fk_purchases_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_purchases_user10`
+//    FOREIGN KEY (`user_id`)
+//    REFERENCES `fmanager`.`user` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION,
+//  CONSTRAINT `fk_purchases_business10`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`sale_items`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`sale_items` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `name` VARCHAR(45) NOT NULL,
+//  `sellPrice` DOUBLE NOT NULL,
+//  `qty` INT NOT NULL,
+//  `subTotal` DOUBLE NOT NULL,
+//  `sales_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_sale_items_sales1_idx` (`sales_id` ASC) ,
+//  CONSTRAINT `fk_sale_items_sales1`
+//    FOREIGN KEY (`sales_id`)
+//    REFERENCES `fmanager`.`sales` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`supplier_loans`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`supplier_loans` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `amount` DOUBLE NOT NULL,
+//  `loanDate` DATETIME NOT NULL,
+//  `term` INT NULL,
+//  `item` VARCHAR(45) NULL,
+//  `notes` VARCHAR(45) NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `amtPaid` DOUBLE NULL,
+//  `suppliers_id` INT NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_supplier_loans_suppliers1_idx` (`suppliers_id` ASC) ,
+//  INDEX `fk_supplier_loans_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_supplier_loans_suppliers1`
+//    FOREIGN KEY (`suppliers_id`)
+//    REFERENCES `fmanager`.`suppliers` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION,
+//  CONSTRAINT `fk_supplier_loans_business1`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//-- -----------------------------------------------------
+//-- Table `fmanager`.`customer_loans`
+//-- -----------------------------------------------------
+//CREATE TABLE IF NOT EXISTS `fmanager`.`customer_loans` (
+//  `id` INT NOT NULL AUTO_INCREMENT,
+//  `amount` DOUBLE NOT NULL,
+//  `loanDate` DATETIME NOT NULL,
+//  `term` INT NULL,
+//  `item` VARCHAR(45) NULL,
+//  `notes` VARCHAR(45) NULL,
+//  `status` VARCHAR(45) NOT NULL,
+//  `amtPaid` DOUBLE NULL,
+//  `customers_id` INT NOT NULL,
+//  `business_id` INT NOT NULL,
+//  PRIMARY KEY (`id`),
+//  INDEX `fk_customer_loans_customers1_idx` (`customers_id` ASC) ,
+//  INDEX `fk_customer_loans_business1_idx` (`business_id` ASC) ,
+//  CONSTRAINT `fk_customer_loans_customers1`
+//    FOREIGN KEY (`customers_id`)
+//    REFERENCES `fmanager`.`customers` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION,
+//  CONSTRAINT `fk_customer_loans_business1`
+//    FOREIGN KEY (`business_id`)
+//    REFERENCES `fmanager`.`business` (`id`)
+//    ON DELETE NO ACTION
+//    ON UPDATE NO ACTION)
+//ENGINE = InnoDB;
+//
+//
+//SET SQL_MODE=@OLD_SQL_MODE;
+//SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+//SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
