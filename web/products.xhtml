@@ -1,0 +1,144 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">FISH MANAGER - Products</ui:define>
+
+    <ui:define name="head">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+
+        <style type="text/css">
+            .sfield{
+                width: 10px;
+                max-width: 10px;
+
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="tableForm">
+            <p:growl id="messages" showDetail="true"/>
+            <p:idleMonitor timeout="#{login.sessionTimeout}">
+                <p:ajax event="idle" listener="#{login.onIdle}"/>
+            </p:idleMonitor>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+
+                    <font size="4" style="font-weight: bold;">Category Items</font>
+                    <hr/>
+                    <h:panelGrid id="topbarinbond" columns="14" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:commandButton id="proButton" type="button" value="New Product" onclick="PF('dlgpro').show();"/>
+
+                        <p:outputLabel value="From"/>
+                        <p:calendar style="color: #ff9933" placeholder="Dated From"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+                        <p:outputLabel value="To"/>
+                        <p:calendar  style="color: #ff9933" placeholder="To"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+
+                         <h:commandLink>
+                            <p:graphicImage name="images/xcel.png" library="verona-layout" width="30"/>
+                            <p:dataExporter type="xls" target="productTable" fileName="Stock Items" />
+                        </h:commandLink>
+                        <p:outputLabel/>
+                    </h:panelGrid>
+                    <hr/>
+                </div>
+                
+                <div>
+                    <p:dataTable var="prod" id="productTable" value="#{product.products}" selectionMode="single" rowIndexVar="index" editable="true" 
+                                 tableStyle="width:auto" selection="#{product.selectedProduct}" rowKey="#{prod.id}" paginator="true" rows="15">
+                        
+                        <p:ajax event="rowEdit" listener="#{product.onRowEdit}" update="productTable"/>
+                        <p:ajax event="rowEditCancel" listener="#{product.onRowCancel}" update="productTable"/>
+                        
+                        <p:column headerText="sNo" style="width:30px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+                        
+                       
+                        <p:column headerText="Name" filterBy="#{prod.name}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prod.name}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{prod.name}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="From(Kg)" filterBy="#{prod.kgfrom}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prod.kgfrom}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{prod.kgfrom}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                       <p:column headerText="To(Kg)"  filterBy="#{prod.kgto}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prod.kgto}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{prod.kgto}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                       </p:column>
+                        <p:column headerText="Buying Price"  filterBy="#{prod.buyingPrice}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prod.buyingPrice}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{prod.buyingPrice}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Selling Price"  filterBy="#{prod.sellingPrice}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{prod.sellingPrice}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{prod.sellingPrice}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                         <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+
+            
+        </h:form>
+        <p:dialog header="New Product" widgetVar="dlgpro" modal="true" width="auto">
+            <hr />
+            <h:form id="newProductForm">
+                <p:panelGrid  id="addProduct" columns="3" layout="grid" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+                        <p:outputLabel  value="Name *" />
+                        <p:outputLabel  value="From(Kg)" />
+                        <p:outputLabel  value="To(kg)" />
+
+                        <p:inputText value="#{product.name}" />
+                        <p:inputText value="#{product.kgfrom}" />
+                        <p:inputText value="#{product.kgto}" />
+                        
+                        <p:outputLabel  value="Cost Price" />
+                        <p:outputLabel  value="Selling Price" />
+                        <p:outputLabel  />
+                        
+                        
+                        <p:inputText value="#{product.buyingPrice}" required="false"/>
+                        <p:inputText value="#{product.sellingPrice}" required="false"/>
+                        <p:outputLabel  />
+                        
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:commandButton style="background-color: #ba1829" value="Clear" />
+                            <p:commandButton actionListener="#{product.saveProduct()}" value="Save" update="addProduct" />
+                        </p:panelGrid>
+                    </p:panelGrid>
+            </h:form>
+        </p:dialog>
+                
+
+    </ui:define>
+
+</ui:composition>
+

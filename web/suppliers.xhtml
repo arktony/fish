@@ -1,0 +1,184 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">FISH MANAGER - Suppliers</ui:define>
+
+    <ui:define name="head">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+
+        <style type="text/css">
+            .sfield{
+                width: 10px;
+                max-width: 10px;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="tableForm">
+            <p:growl id="messages" showDetail="true"/>
+            <p:idleMonitor timeout="#{login.sessionTimeout}">
+                <p:ajax event="idle" listener="#{login.onIdle}"/>
+            </p:idleMonitor>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+
+                    <font size="4" style="font-weight: bold;">Suppliers</font>
+                    <hr/>
+                    <h:panelGrid id="topbarinbond" columns="14" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:commandButton id="proButton" type="button" value="New Supplier" onclick="PF('dlgsup').show();"/>
+                        <p:commandButton id="loanBtn" disabled="#{supplier.disabledLoanBtn}" type="button" value="Loan" onclick="PF('dlgloan').show();"/>
+
+                        <p:outputLabel value="From"/>
+                        <p:calendar style="color: #ff9933" placeholder="Dated From"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+                        <p:outputLabel value="To"/>
+                        <p:calendar  style="color: #ff9933" placeholder="To"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+
+                         <h:commandLink>
+                            <p:graphicImage name="images/xcel.png" library="verona-layout" width="30"/>
+                            <p:dataExporter type="xls" target="supplierTable" fileName="Suppliers" />
+                        </h:commandLink>
+                        <p:outputLabel/>
+                    </h:panelGrid>
+                    <hr/>
+                </div>
+                
+                <div>
+                    <p:dataTable var="spl" id="supplierTable" value="#{supplier.suppliers}" selectionMode="single" reflow="true" rowIndexVar="index" editable="true" 
+                                 tableStyle="width:auto" selection="#{supplier.selectedSupplier}" rowKey="#{spl.id}" paginator="true" rows="15" >
+                        <p:ajax event="rowSelect" listener="#{supplier.handleLoanButton()}" update=":tableForm:loanBtn"/>
+                        <p:ajax event="rowEdit" listener="#{supplier.onRowEdit}" update="supplierTable"/>
+                        <p:ajax event="rowEditCancel" listener="#{supplier.onRowCancel}" update="supplierTable"/>
+                        
+                        <p:column headerText="sNo" style="width:30px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+                       
+                        <p:column headerText="First Name" filterBy="#{spl.firstName}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.firstName}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.firstName}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Last Name" filterBy="#{spl.lastName}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.lastName}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.lastName}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                       <p:column headerText="Phone" filterBy="#{spl.phone}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.phone}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.phone}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                       </p:column>
+                        <p:column headerText="Email" filterBy="#{spl.email}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.email}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.email}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="ID No." filterBy="#{spl.nin}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.nin}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.nin}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Address" filterBy="#{spl.address}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{spl.address}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{spl.address}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                         <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+        <p:dialog header="New Supplier" widgetVar="dlgsup" modal="true" width="auto">
+            <hr />
+            <h:form id="newSupplier">
+                <p:panelGrid  id="addsupplier" columns="3" layout="grid" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:outputLabel  value="First Name *" />
+                        <p:outputLabel  value="Last Name" />
+                        <p:outputLabel  value="Phone Number" />
+
+                        <p:inputText value="#{supplier.firstName}" />
+                        <p:inputText value="#{supplier.lastName}" />
+                        <p:inputText value="#{supplier.phone}" />
+                        
+                        <p:outputLabel  value="Email" />
+                        <p:outputLabel  value="ID Number" />
+                        <p:outputLabel  value="Address"/>
+                        
+                        <p:inputText value="#{supplier.email}" required="false"/>
+                        <p:inputText value="#{supplier.nin}" required="false"/>
+                        <p:inputText value="#{supplier.address}" required="false"/>
+                        
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:commandButton style="background-color: #ba1829" value="Clear" />
+                            <p:commandButton actionListener="#{supplier.saveSupplier()}" value="Save" oncomplete="PF('dlgsup').hide();" update=":tableForm:supplierTable" />
+                        </p:panelGrid>
+                   </p:panelGrid>
+            </h:form>
+            
+        </p:dialog>
+        
+        <p:dialog header="New Loan" widgetVar="dlgloan" modal="true" width="auto">
+            <hr />
+            <h:form id="newLoan">
+                <p:panelGrid  id="addloan" columns="2" layout="grid" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:outputLabel  value="Loan Date *" />
+                        <p:outputLabel  value="Loan Amount" />
+
+                        <p:calendar  style="color: #ff9933" value="#{supplier.loanDate}" placeholder="Loan date"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                        </p:calendar>
+                        <p:inputText value="#{supplier.amount}" />
+                        
+                        <p:outputLabel  value="Item Description" />
+                        <p:outputLabel  value="Term" />
+                        
+                        <p:inputText value="#{supplier.item}" required="false"/>
+                        <p:inputText value="#{supplier.term}" required="false"/>
+                        
+                        <p:outputLabel  value="Notes(If Any)"/>
+                        <p:outputLabel  value="Return Date"/>
+                        <p:inputText value="#{supplier.notes}" required="false"/>
+                        <p:inputText readonly="true" required="false"/>
+                        
+                        <p:outputLabel />
+                        <p:outputLabel />
+                        
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:commandButton style="background-color: #ba1829" value="Clear" />
+                            <p:commandButton actionListener="#{supplier.giveLoanToSupplier()}" value="Save" oncomplete="PF('dlgloan').hide();" />
+                        </p:panelGrid>
+                   </p:panelGrid>
+            </h:form>
+            
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

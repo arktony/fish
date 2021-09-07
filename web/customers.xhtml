@@ -1,0 +1,134 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">FISH MANAGER - Customers</ui:define>
+
+    <ui:define name="head">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+
+        <style type="text/css">
+            .sfield{
+                width: 10px;
+                max-width: 10px;
+
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="tableForm">
+            <p:growl id="messages" showDetail="true"/>
+            <p:idleMonitor timeout="#{login.sessionTimeout}">
+                <p:ajax event="idle" listener="#{login.onIdle}"/>
+            </p:idleMonitor>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+
+                    <font size="4" style="font-weight: bold;">Customers</font>
+                    <hr/>
+                    <h:panelGrid id="topbarinbond" columns="14" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:commandButton id="proButton"  type="button" value="New Client" onclick="PF('dlgcust').show();"/>
+
+                        <p:outputLabel value="From"/>
+                        <p:calendar style="color: #ff9933" placeholder="Dated From"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+                        <p:outputLabel value="To"/>
+                        <p:calendar  style="color: #ff9933" placeholder="To"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" />
+                        </p:calendar>
+
+                         <h:commandLink>
+                            <p:graphicImage name="images/xcel.png" library="verona-layout" width="30"/>
+                            <p:dataExporter type="xls" target="clientsTable" fileName="Suppliers" />
+                        </h:commandLink>
+                        <p:outputLabel/>
+                    </h:panelGrid>
+                    <hr/>
+                </div>
+                
+                <div>
+                    <p:dataTable var="cls" id="clientsTable" value="#{clients.clients}" selectionMode="single" reflow="true" rowIndexVar="index" editable="true" 
+                                 tableStyle="width:auto" selection="#{clients.selectedClient}" rowKey="#{cls.id}" paginator="true" rows="15" >
+                        
+                        <p:ajax event="rowEdit" listener="#{clients.onRowEdit}" update="clientsTable"/>
+                        <p:ajax event="rowEditCancel" listener="#{clients.onRowCancel}" update="clientsTable"/>
+                        
+                        <p:column headerText="sNo" style="width:30px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+                       
+                        <p:column headerText="Full Name" filterBy="#{cls.fullName}"  style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{cls.fullName}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{cls.fullName}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Phone" filterBy="#{cls.phone}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{cls.phone}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{cls.phone}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Email" filterBy="#{cls.email}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{cls.email}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{cls.email}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Address" filterBy="#{cls.address}" style="white-space:nowrap;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{cls.address}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{cls.address}" style="width:96%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        
+                         <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+                        
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+        <p:dialog header="New Client" widgetVar="dlgcust" modal="true" width="auto">
+            <hr />
+            <h:form id="newClient">
+                <p:panelGrid id="addclient" columns="2" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:outputLabel  value="Full Name *" />
+                        <p:outputLabel  value="Phone Number" />
+
+                        <p:inputText value="#{clients.fullName}" />
+                        <p:inputText value="#{clients.phone}" />
+                        
+                        <p:outputLabel  value="Email" />
+                        <p:outputLabel  value="Address"/>
+                        
+                        <p:inputText value="#{clients.email}" required="false"/>
+                        <p:inputText value="#{clients.address}" required="false"/>
+                        
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:commandButton style="background-color: #ba1829" value="Clear" />
+                            <p:commandButton actionListener="#{clients.saveClient()}" value="Save" oncomplete="PF('dlgcust').hide();" update=":tableForm:clientsTable" />
+                        </p:panelGrid>
+                   </p:panelGrid>
+            </h:form>
+            
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

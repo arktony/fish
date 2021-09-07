@@ -1,0 +1,206 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .cars-datalist .text-column p:last-child{
+                color:#757575;
+            }
+
+            .cars-datalist .car-item {
+                padding: 8px 14px;
+                border-bottom: 1px solid #dce2e7;
+            }
+
+            .cars-datalist li:last-child .car-item {
+                border: 0 none;
+            }
+
+            .cars-datalist .car-item img, .cars-datalist .car-item .car-details {
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 14px;
+            }
+
+            .cars-datalist .car-item button {
+                float: right;
+            }
+
+            .cars-datalist ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            .ui-car-display td:last-child {
+                font-weight: 700;
+            }
+
+            @media (max-width:640px) {
+                .cars-datalist .text-column {
+                    text-align: center;
+                }
+
+                .ui-tree {
+                    width: 100%;
+                }
+            }
+            .thirty{
+                width: 30%;
+            }
+
+            .seventy{
+                width: 70%;
+            }
+            .twenty{
+                width: 20%;
+            }
+            .eighty{
+                width: 80%;
+            }
+            .ten{
+                width: 10%;
+            }
+            .ninenty{
+                width: 90%;
+            }
+            span.ui-inputnumber > input[type=text] {
+                text-align: right;
+            }
+            .rightcolumns {
+                align-items: flex-end
+            }
+            .panelColumns td {
+                vertical-align: top; 
+                align-items: flex-end;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">FISH MANAGER - Supplier And Client Loans</ui:define>
+
+    <ui:define name="head">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+    </ui:define>
+    <ui:define name="content">
+        <p:growl id="messages" showDetail="true"/>
+        <div class="ui-g ui-fluid">
+            <h:form id="form">
+                <p:idleMonitor timeout="#{login.sessionTimeout}">
+                    <p:ajax event="idle" listener="#{login.onIdle}"/>
+                </p:idleMonitor>
+                <font size="4" style="font-weight: bold;">Supplier And Client Loan Operations.</font>
+                <hr/>
+                <div class="ui-g-12 ui-lg-12 card">
+                    <h:panelGrid id="newReceipt" columns="11" styleClass="ui-panelgrid-blank grid-pad">
+
+                        <p:commandButton id="appLoanBtn" disabled="#{loans.disabledApproveBtn}" type="button" value="Approve">
+                            <p:ajax process="@this" event="click" listener="#{loans.approveLoan()}" update="loansTable"/>
+                        </p:commandButton>
+                        <p:commandButton  value="Pay Loan"  update="@form"/>
+                        <p:commandButton  value="Delete"  update="@form">
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+
+                        <p:selectOneMenu id="option" value="#{loans.selectedLoanGroup}">
+                            <p:ajax event="change" update="loansTable" listener="#{loans.getAllLoans()}" />
+                            <f:selectItem itemLabel="Select Loan Group" itemValue="0"/>
+                            <f:selectItem itemLabel="Suppliers" itemValue="1"/>
+                            <f:selectItem itemLabel="Clients" itemValue="2"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="From"/>
+                        <p:calendar  style="color: #ff9933" placeholder="Dated From"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect"  update="loansTable"/>
+                        </p:calendar>
+                        <p:outputLabel value="To"/>
+                        <p:calendar  style="color: #ff9933" placeholder="To"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" update="loansTable"/>
+                        </p:calendar>
+                        <h:commandLink>
+                            <p:graphicImage name="images/xcel.png" library="verona-layout" width="30"/>
+                            <p:dataExporter type="xls" target="loansTable" fileName="Loans" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                    <p:dataTable id="loansTable" var="loan" value="#{loans.getAllLoansContainer}" selectionMode="single" reflow="true" paginator="true" rows="15"
+                                 rowIndexVar="index" editable="false" sortBy="#{loan.loanDate}" selection="#{loans.selectedLoan}" rowKey="#{loan.id}">
+                        <p:ajax event="rowSelect" listener="#{loans.handleApproveBtn()}" update=":form:appLoanBtn"/>
+                        <p:column headerText="sNo" style="width:20px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+
+                        <p:column headerText="Date Taken." filterBy="#{loan.loanDate}" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.loanDate}" style="float:left"/>
+                        </p:column>
+
+                        <p:column headerText="#{loans.groupLabelName}" filterBy="#{loan.mainId}" style="width:60%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.mainId}" style="float:left;"/>
+                        </p:column>
+
+                        <p:column headerText="Loan Item" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.item}" style="float:left"/>
+                        </p:column>
+                        
+                        <p:column headerText="Loan Term" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.term}" style="float:right"/>
+                        </p:column>
+
+                        <p:column headerText="Amount" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.amount}" style="float:right"/>
+                        </p:column>
+
+                        <p:column headerText="Note." style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.notes}" style="float:left"/>
+                        </p:column>
+
+                        <p:column headerText="Status" filterBy="#{loan.loanStatus}" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{loan.loanStatus}" style="float:left"/>
+                        </p:column>
+                        <p:column style="width:16%;text-align: center">
+                            <p:commandButton  oncomplete="PF('dlg10').show()" icon="ui-icon-search" title="View">
+                                <f:setPropertyActionListener value="" target="" />
+                            </p:commandButton>
+                        </p:column>
+                        <f:facet name="footer" >
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">LOANED AMOUNT</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" decimalPlaces="1" style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">PAID AMOUNT</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" decimalPlaces="1"  style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">BALANCE</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" decimalPlaces="1"  style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+
+
+                        </f:facet>
+                    </p:dataTable>
+                </div>
+
+            </h:form>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

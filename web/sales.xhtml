@@ -1,0 +1,304 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .cars-datalist .text-column p:last-child{
+                color:#757575;
+            }
+
+            .cars-datalist .car-item {
+                padding: 8px 14px;
+                border-bottom: 1px solid #dce2e7;
+            }
+
+            .cars-datalist li:last-child .car-item {
+                border: 0 none;
+            }
+
+            .cars-datalist .car-item img, .cars-datalist .car-item .car-details {
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 14px;
+            }
+
+            .cars-datalist .car-item button {
+                float: right;
+            }
+
+            .cars-datalist ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            .ui-car-display td:last-child {
+                font-weight: 700;
+            }
+
+            @media (max-width:640px) {
+                .cars-datalist .text-column {
+                    text-align: center;
+                }
+
+                .ui-tree {
+                    width: 100%;
+                }
+            }
+            .thirty{
+                width: 30%;
+            }
+
+            .seventy{
+                width: 70%;
+            }
+            .twenty{
+                width: 20%;
+            }
+            .eighty{
+                width: 80%;
+            }
+            .ten{
+                width: 10%;
+            }
+            .ninenty{
+                width: 90%;
+            }
+            span.ui-inputnumber > input[type=text] {
+                text-align: right;
+            }
+            .rightcolumns {
+                align-items: flex-end
+            }
+            .panelColumns td {
+                vertical-align: top; 
+                align-items: flex-end;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">FISH MANAGER - Sales</ui:define>
+
+    <ui:define name="head">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+    </ui:define>
+    <ui:define name="content">
+        
+        <div class="ui-g ui-fluid">
+            <h:form id="form">
+                <p:idleMonitor timeout="#{login.sessionTimeout}">
+                    <p:ajax event="idle" listener="#{login.onIdle}"/>
+                </p:idleMonitor>
+                <font size="4" style="font-weight: bold;">Sales</font>
+                <hr/>
+                <div class="ui-g-12 ui-lg-12 card">
+                    <h:panelGrid id="newSalePanel" columns="11" styleClass="ui-panelgrid-blank grid-pad">
+                        
+                        <p:commandButton id="newSale" type="button" value="New Sale" onclick="PF('dlg3').show();"/>
+                        
+                        <p:commandButton id="appsale" disabled="#{sales.disableApproveBtn}" type="button" value="Approve Sale">
+                            <p:ajax process="@this" event="click" listener="#{sales.approveSale()}" update="salesTable"/>
+                            <p:confirm header="Confirmation" message="Are you sure you want to Approve this Sale?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        
+                        <p:commandButton type="button" id="cancelBtn" value="Cancel" disabled="#{sales.disableCancelBtn}" update="@form">
+                            <p:ajax process="@this" event="click" listener="#{sales.cancelSale()}" update="salesTable"/>
+                            <p:confirm header="Confirmation" message="Are you sure you want to Cancel this Sale?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        
+                        <p:commandButton type="button" id="deleteBtn" value="Delete" disabled="#{sales.disableDeleteBtn}"  update="@form">
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+
+                        <p:outputLabel value="From"/>
+                        <p:calendar  style="color: #ff9933" placeholder="Dated From"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect"  update="salesTable"/>
+                        </p:calendar>
+                        <p:outputLabel value="To"/>
+                        <p:calendar  style="color: #ff9933" placeholder="To"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                            <p:ajax event="dateSelect" update="salesTable"/>
+                        </p:calendar>
+                        <h:commandLink>
+                            <p:graphicImage name="images/xcel.png" library="verona-layout" width="30"/>
+                            <p:dataExporter type="xls" target="salesTable" fileName="all_receipts" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                    <p:dataTable id="salesTable" var="sale" value="#{sales.saleData}" selectionMode="single" reflow="true" paginator="true" rows="8"
+                                 rowIndexVar="index" editable="false" sortBy="#{sales.saleNo}" selection="#{sales.selectedSale}" rowKey="#{sale.id}">
+                        <p:ajax event="rowSelect" listener="#{sales.enableApproveBtn()}" update="@form"/>
+                        <p:column headerText="sNo" style="width:20px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+
+                        <p:column headerText="Sale Date." filterBy="#{sale.sdate}" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.sdate}" style="float:left"/>
+                        </p:column>
+                        
+                        <p:column headerText="Sale No" filterBy="#{sale.saleNo}" style="width:30%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.saleNo}" style="float:left"/>
+                        </p:column>
+                        
+                        <p:column headerText="Customer" filterBy="#{sale.customer}" style="width:80%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.customer}" style="float:left"/>
+                        </p:column>
+
+                        <p:column headerText="Total Amount" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.amt}" style="float:right"/>
+                        </p:column>
+
+                        <p:column headerText="Amount Paid" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.amtPaid}" style="float:right"/>
+                        </p:column>
+                        
+                        <p:column headerText="Balance" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.balance}" style="float:right"/>
+                        </p:column>
+
+                        <p:column headerText="Status" style="width:50%;text-align: center;white-space:nowrap;">
+                            <h:outputText value="#{sale.status}" style="float:left"/>
+                        </p:column>
+                        <p:column style="width:15%;text-align: center">
+                            <p:commandButton  oncomplete="PF('dlg10').show()" icon="ui-icon-search" title="View">
+                                <f:setPropertyActionListener value="" target="" />
+                            </p:commandButton>
+                        </p:column>
+                        <f:facet name="footer" >
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">TOTAL AMOUNT</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" value="#{sales.tTotalAmount}" decimalPlaces="1" style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">TOTAL PAID</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" value="#{sales.tAmountPaid}" decimalPlaces="1"  style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">BALANCE</font>
+                                    <p:spacer width="10" height="10" />
+                                    <p:inputNumber readonly="true" value="#{sales.tBalance}" decimalPlaces="1"  style="width: 100px; min-width: 100px" />
+                                </div>
+                            </p:panelGrid>
+
+
+                        </f:facet>
+                    </p:dataTable>
+                </div>
+
+            </h:form>
+
+            <p:dialog header="New Sale" widgetVar="dlg3" modal="true" width="80%">
+                <p:growl id="messages" showDetail="true"/>
+                <hr />
+                <h:form id="newform">
+                    <p:idleMonitor timeout="#{login.sessionTimeout}">
+                        <p:ajax event="idle" listener="#{login.onIdle}"/>
+                    </p:idleMonitor>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:outputLabel value="Customer *"/>
+                        <p:outputLabel value="Sale Date *"/>
+
+                        <p:autoComplete dropdown="true" maxResults="10" value="#{sales.customer}" completeMethod="#{sales.getClientz}" ></p:autoComplete>
+                        <p:calendar  style="color: #ff9933" value="#{sales.sdate}" placeholder="Sale date"  locale="en_US" navigator="true" pattern="yyyy-MMM-dd">
+                        </p:calendar>
+
+                    </p:panelGrid>
+                    <hr/>
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank grid-pad" style="margin-top:10px">
+
+                        <p:outputLabel value="Items *"/>
+                        <p:outputLabel value="Selling Price *"/>
+                        <p:outputLabel value="Quantity *"/>
+                        <p:outputLabel value=""/>
+
+                        <p:autoComplete dropdown="true" maxResults="10" value="#{sales.name}" completeMethod="#{sales.getItems}">
+                            <p:ajax event="itemSelect" listener="#{sales.setSellingPrice()}" update=":newform:sellPrice"/>
+                        </p:autoComplete>
+                        <p:inputNumber id="sellPrice" value="#{sales.sellPrice}" />
+                        <p:inputNumber value="#{sales.qty}" />
+                        <p:commandButton value="Add" update=":newform:saleItems" actionListener="#{sales.populateNewSaleItems()}" icon="fa fa-plus"/>
+
+                    </p:panelGrid>
+
+
+                    <p:dataTable id="saleItems" var="newsale" value="#{sales.newSalesItems}" sortBy="#{newsale.name}" editable="true" rowIndexVar="index" style="margin-bottom:20px; width: 100%" >
+                     
+                        <p:ajax event="rowEdit"  update="totalamountnew"/>
+                        <p:column headerText="sNo" style="width:30px;text-align: center">
+                            <h:outputText value="#{index + 1}" />
+                        </p:column>
+                        <p:column headerText="Name">
+                            <h:outputText value="#{newsale.name}" />
+                        </p:column>
+
+                        <p:column headerText="Selling Price">
+                            <h:outputText value="#{newsale.sellPrice}" style="float:right"> 
+                                <f:convertNumber   pattern="¤#,##0.0" currencySymbol="" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Qty">
+                            <h:outputText value="#{newsale.qty}" />
+                        </p:column>
+                        <p:column headerText="Sub-Total">
+                            <h:outputText value="#{newsale.subTotal}" style="float:right"> 
+                                <f:convertNumber   pattern="¤#,##0.0" currencySymbol="" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+
+                        <f:facet name="footer" >
+
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">TOTAL AMOUNT</font>
+                                    <p:inputNumber id="totalamountnew" decimalPlaces="1" value="#{sales.amt}" readonly="true"  style="width: 100px; min-width: 100px; color: #ff9933; font-weight: bolder" />
+                                </div>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">AMOUNT PAID</font>
+                                    <p:inputNumber decimalPlaces="1" value="#{sales.amtPaid}" style="width: 100px; min-width: 100px; color: #ff9933; font-weight: bolder">
+                                        <!--<p:ajax event="blur" listener="#{sales.calculateBalance()}" update="balance" />-->
+                                    </p:inputNumber>
+                                </div>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" style="margin-right: 0; padding: 0" layout="grid" styleClass="ui-panelgrid-blank">
+                                <div  style="float: right;">
+                                    <font size="2" style="font-weight: bold;">BALANCE</font>
+                                    <p:inputNumber decimalPlaces="1" readonly="true" value="#{sales.balance}" id="balance" style="width: 100px; min-width: 100px; color: #ff9933; font-weight: bolder" />
+                                </div>
+                            </p:panelGrid>
+                            
+                        </f:facet>
+
+                    </p:dataTable>  
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank grid-pad">
+                        <p:outputLabel />
+                        <p:outputLabel />
+                        <p:commandButton icon="fa fa-trash" actionListener="#{sales.dePopulateNewSaleItem()}" update=":newform:saleItems" value="Cancel" styleClass="pink-btn"/>
+                        <p:commandButton icon="fa fa-save" actionListener="#{sales.saveSale()}" update=":form:salesTable" value="Save"/>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

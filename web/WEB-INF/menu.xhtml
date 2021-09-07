@@ -1,0 +1,87 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pv="http://primefaces.org/verona">
+
+    <div class="layout-menu-wrapper fadeInDown">
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form>
+                        <p:growl id="growl" showDetail="true" autoUpdate="true" />
+                        <pv:menu>
+
+                            <p:submenu label="PRODUCTS" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="products" value="Products" outcome="/products" />
+                            </p:submenu>
+                            
+                            <p:submenu label="SUPPLIER" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="suppliers" value="Suppliers" outcome="/suppliers" />
+                            </p:submenu>
+                            
+                            <p:submenu label="PURCHASES" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="purchases" value="Purchases" outcome="/purchases" />
+                            </p:submenu>
+                            
+                             <p:submenu label="CUSTOMERS" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="customers" value="Customers" outcome="/customers" />
+                            </p:submenu>
+                            
+                            <p:submenu label="SALES" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="sales" value="Sales" outcome="/sales" />
+                            </p:submenu>
+                            
+                            <p:submenu label="LOANS" style="min-width: 150px" icon="fa fa-th">
+                                <p:menuitem id="loans" value="Loans" outcome="/loans" />
+                            </p:submenu>
+
+                            <p:submenu id="settings" label="SETTINGS" style="min-width: 200px" icon="fa fa-cog">
+
+                                <p:submenu id="om_customization" label="CUSTOMIZATION" icon="fa fa-cog">
+                                    <p:submenu id="om_layout_menu" label="Menu" icon="fa fa-bars">
+                                        <p:menuitem id="om_horizontal_menu" value="Horizontal Menu" icon="fa fa-bars" actionListener="#{guestPreferences.setMenuMode('horizontal')}" ajax="false"/>
+                                        <p:menuitem id="om_popup_menu" value="Popup Menu" icon="fa fa-bars" actionListener="#{guestPreferences.setMenuMode('popup')}" ajax="false"/>
+                                        <p:menuitem id="om_overlay_menu" value="Overlay Menu" icon="fa fa-bars" actionListener="#{guestPreferences.setMenuMode('overlay')}" ajax="false"/>
+                                        <p:menuitem id="om_static_menu" value="Static Menu" icon="fa fa-bars" actionListener="#{guestPreferences.setMenuMode('static')}" ajax="false"/>
+                                    </p:submenu>
+                                    <p:submenu id="om_layout_colors" label="Layout Colors" icon="fa fa-paint-brush">
+                                        <p:submenu id="om_layout_flat" label="Flat" icon="fa fa-paint-brush">
+                                            <p:menuitem id="om_layout_dark" value="Dark" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('dark')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_turquoise" value="Turquoise" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('turquoise')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_green" value="Green" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('green')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_blue" value="Blue" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('blue')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_rose" value="Rose" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('rose')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_teal" value="Teal" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('teal')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_bluegrey" value="Blue Grey" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('bluegrey')}" ajax="false"/>
+                                        </p:submenu>
+                                        <p:submenu id="om_layout_special" label="Special" icon="fa fa-paint-brush">
+                                            <p:menuitem id="om_layout_cosmic" value="Cosmic" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('cosmic')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_beach" value="Beach" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('beach')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_flow" value="Flow" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('flow')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_fly" value="Fly" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('fly')}" ajax="false"/>
+                                            <p:menuitem id="om_layout_nepal" value="Nepal" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('nepal')}" ajax="false"/>
+                                        </p:submenu>
+                                    </p:submenu>
+                                    <p:submenu id="om_themes" label="Themes" icon="fa fa-magic">
+                                        <p:menuitem id="om_theme_green" value="Green Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('green')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_teal" value="Teal Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('teal')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_blue" value="Blue Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('blue')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_amber" value="Amber Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('amber')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_purple" value="Purple Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('purple')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_turquoise" value="Turquoise Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('turquoise')}" ajax="false"/>
+                                        <p:menuitem id="om_theme_bluegrey" value="Blue Grey Theme" icon="fa fa-magic" actionListener="#{guestPreferences.setTheme('bluegrey')}" ajax="false"/>
+                                    </p:submenu>
+                                </p:submenu>
+                            </p:submenu>
+
+                        </pv:menu>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

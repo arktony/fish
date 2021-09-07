@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/verona-layout/images/fish_image.png"/>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <META HTTP-EQUIV="refresh" CONTENT="300"/>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>FISH MANAGER</title>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        
+        <h:form id="lform">
+            <div class="login-panel ui-fluid">
+                <div class="ui-g">
+                    <p:growl id="growl" showDetail="true" autoUpdate="true" />
+                    <div class="ui-g-12 logo-container">
+                        <p:graphicImage name="images/fish_image.png" library="verona-layout" />
+                        <div><font size="6" style="font-weight: bold; font-size: 10">FISH</font><font size="6" style="font-size: 10">MANAGER</font></div>
+                        <h2>Log Into Your Account </h2>
+                    </div>
+                    <div class="ui-g-12">
+                        <p:inputText placeholder="Username" value="#{login.email}" />
+                    </div>
+                    <div class="ui-g-12">
+                        <p:password placeholder="Password" value="#{login.password}" feedback="false">
+                            <f:ajax event="keyup"/>
+                        </p:password>
+                    </div>
+                    
+                    <div class="ui-g-12 button-container">
+                        <p:commandButton action="#{login.validateUsernamePassword()}" ajax="false"  value="Sign In" icon="fa fa-sign-in" styleClass="green-btn raised-btn rounded-btn"/>
+                    </div>
+                     <div class="ui-g-12 button-container">
+                         <p:commandLink action="admin" ajax="false"  value="Sign Up" styleClass="green-btn raised-btn rounded-btn"/>
+                    </div>
+                    
+                    <div class="ui-g-12 button-container">
+                         <p:commandLink action="forgot" ajax="false"  value="Forgot Password?" styleClass="red-btn raised-btn rounded-btn"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="verona-layout" />
+    </h:body>
+
+</html>
